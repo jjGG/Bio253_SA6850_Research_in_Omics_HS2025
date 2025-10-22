@@ -23,6 +23,11 @@
 .Rproj.user/
 
 # produced vignettes
+Rscripts/*.html
+Rscripts/*.pdf
+
+
+# produced vignettes
 vignettes/*.html
 vignettes/*.pdf
 
