@@ -314,19 +314,21 @@ overlapping_genes_details_all <- biocycSA6850_slim %>%
 print(overlapping_genes_details_all)
 
 # bring in AGU
+# here we parsed the description lines of the fasta file into a data frame
 desc <- readRDS("../resources/descFasta.rds")
 overlapping_genes_details_all <- left_join(overlapping_genes_details_all, desc, by = c("Acc2" = "LocusTag"))
 
 
 # also join in proteomics expression data
+# in this sheet we assembled the protein expression data w/ the different statistical analysis for different contrasts
 prXdata <- read_tsv("../resources/SA6850_prXallWide_moreMeta.tsv")
 genes_w_proteinExpression_in_hypoRegions <- left_join(x = overlapping_genes_details_all, y = prXdata, by = c("Acc2" = "LocusTag"))
 
 
 
-
-
-
+# iBAQ value is a measurement for proteins in proteomics that can be used to
+# compare different proteins to each other
+# idea: compared to overall expression are the proteins often more or less abundant?
 hist(log10(prXdata$mean_iBAQ))
 hist(log10(genes_w_proteinExpression_in_hypoRegions$mean_iBAQ))
 
@@ -353,11 +355,11 @@ ggplot() +
 
 
 
-# Look for Motif for all OR for the ones in the peaks?
+# Look for Motif where 6mA is methylated for all OR for the ones in particular peaks?
 
 
 
-# screen "back-ground" motifs for known motif!
+# screen "back-ground" (DNA) for known (degenerated) motifs of methylation
 
 
 
