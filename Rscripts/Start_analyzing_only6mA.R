@@ -38,7 +38,8 @@ biocycSA6850_slim <- biocycSA6850 %>%
     select(Acc2, start, end, strand) %>%
     mutate(start = as.numeric(start), end = as.numeric(end))
 
-
+# who is in the game what clones
+table(mtX$group)
 
 # Show densities of IPDratio and visualize different feature types
 (pdfN <- paste(project,"_", desc, "IPDRatio_density_by_feature_", dateToday, ".pdf", sep = ""))
