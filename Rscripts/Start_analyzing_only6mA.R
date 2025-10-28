@@ -137,7 +137,7 @@ methylation_binned_all$endBin <- methylation_binned_all$bin + (bin_size -1) # en
 # visualize the methylation bins with features
 colnames(methylation_binned_all)
 colnames(methylation_binned_all)[3:20]
-mat <- methylation_binned[,3:20] # select only the methylation marks
+mat <- methylation_binned_all[,3:20] # select only the methylation marks
 
 rownames(mat) <- paste(methylation_binned_all$bin, methylation_binned_all$strand, sep = "_")
 
@@ -172,6 +172,10 @@ methylation_data_with_diff <- methylation_slim %>%
     mutate(diff_to_next_site = lead(start) - start) %>%
     ungroup()
 
+# inspect the diff values
+# @NZ: do you think this is real?
+# @NZ: What do you think could this mean?
+table(table(methylation_data_with_diff$diff_to_next_site))
 
 # visualize diff per strand as boxplot and use the same colors for strand
 (pdfN <- paste(project,"_", desc, "_Boxplot_spacing_methylationSites_byStrand_", dateToday, ".pdf", sep = ""))
