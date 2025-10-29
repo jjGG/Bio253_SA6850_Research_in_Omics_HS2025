@@ -114,7 +114,7 @@ ggplot() +
 
 (fN <- paste(project,"_", desc,"_", "Distribution_mSites_alongChromosome", dateToday, ".pdf", sep = ""))
 # save the plot
-ggsave(fN, width = 10, height = 6)
+ggsave(fN, width = 20, height = 6)
 # Conclusion ->  far from uniform distributed
 # maybe investigate peaks and gaps further?
 
@@ -140,23 +140,64 @@ colnames(methylation_binned_all)[3:20]
 mat <- methylation_binned_all[,3:20] # select only the methylation marks
 
 rownames(mat) <- paste(methylation_binned_all$bin, methylation_binned_all$strand, sep = "_")
+colnames(mat)
+
+# Extract sample annotations
+treatment <- gsub(".*_(.*)_.*", "\\1", colnames(mat))
+clone <- gsub("_.*", "", colnames(mat))
+
+annotation_col <- data.frame(
+    Treatment = treatment,
+    Clone = clone
+)
+rownames(annotation_col) <- colnames(mat)
+
+# Define colors that exactly match your annotation values
+ann_colors <- list(
+    Treatment = c(
+        TSB = "#d95f02",   # orange
+        PASN = "#1b9e77"   # green
+    ),
+    Clone = c(
+        `6850` = "#7570b3",   # purple
+        SB0804 = "#e7298a",   # pink
+        SB1002 = "#66a61e"    # green
+    )
+)
+
+# Generate heatmap
+pheatmap(
+    mat,
+    scale = "none",
+    cluster_rows = TRUE,
+    cluster_cols = TRUE,
+    show_rownames = FALSE,
+    show_colnames = TRUE,
+    annotation_col = annotation_col,
+    annotation_colors = ann_colors,
+    main = "Methylation Binned Heatmap",
+    fontsize_row = 6,
+    fontsize_col = 10
+)
+
+
 
 # make a heatmap of the methylation marks
-
 (pdfN <- paste(project,"_", desc, "_Heatmap_binned_", dateToday, ".pdf", sep = ""))
-pdf(pdfN, 12,12)
+pdf(pdfN, 6,6)
 pheatmap(mat,
+         scale="none",
          cluster_rows = TRUE,
          cluster_cols = TRUE,
          show_rownames = FALSE,
          show_colnames = TRUE,
+         annotation_col = annotation_col,
+         annotation_colors = ann_colors,
          main = paste("Methylation Binned Heatmap"),
          fontsize_row = 6,
          fontsize_col = 10)
 
 dev.off()
-
-
 
 # calc and add column with difference to next position on the same strand
 # mutate(diff_to_next_site = start - lag(start)) %>%
@@ -217,7 +258,7 @@ ggplot(methylation_slim, aes(x = start)) +
 
 (fN <- paste(project,"_", desc, "_Density_methylationSites_byClone_and_Treatment_", dateToday, ".pdf", sep = ""))
 # save the plot
-ggsave(fN, width = 10, height = 10)
+ggsave(fN, width = 20, height = 10)
 
 # by treatment and clone
 ggplot(methylation_slim, aes(x = start)) +
@@ -241,7 +282,7 @@ ggplot(methylation_slim, aes(x = start)) +
 
 (fN <- paste(project,"_", desc, "_Density_methylationSites_byTreatmentNClone_", dateToday, ".pdf", sep = ""))
 # save the plot
-ggsave(fN, width = 10, height = 10)
+ggsave(fN, width = 30, height = 10)
 
 
 # do again binning without clones
