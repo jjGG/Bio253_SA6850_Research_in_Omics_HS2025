@@ -15,12 +15,11 @@ library(tidyverse)
 library(readxl)
 library(GGally)
 
-### 1) Load data
-pfad <- "C:/Users/rubid/Documents/1_Prio_Biomedizin/AAA/00_AAA_BIO253/Bio253_SA6850_Research_in_Omics_HS2025-main"
-datei <- "tabel_STX.xlsx"
-full_path <- file.path(pfad, datei)
-
-df <- read_excel(full_path, sheet = "Tabelle2", skip = 3)
+#### 1) Read data
+setwd("../Bio253_SA6850_Research_in_Omics_HS2025")       # relative folder path!
+file <- "resources/LaraYaiza_tabel_STX.xlsx"             # Dateiname Resource
+#### richtige Tabelle einlesen
+df <- read_excel(file,sheet = "Tabelle2",skip=3)
 
 ### 2) Clean numeric columns
 df[df == "Missing"] <- NA
