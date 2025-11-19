@@ -300,7 +300,7 @@ for (g in genes) {
 }
 
 ###%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-### TODO
+### TODO - NOT DONE YET!
 ### add number in middlel of each box to one decimal~
 ### LEGENDE make the colour bar horizontal since legend titel is going to be large in order to save space
 ### Legende " log2(PASN/TSB)" --> whow maximum and minimum and the zero
