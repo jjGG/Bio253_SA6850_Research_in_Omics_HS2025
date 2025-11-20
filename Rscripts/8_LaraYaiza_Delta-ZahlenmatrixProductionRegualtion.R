@@ -5,6 +5,7 @@
 library(readxl)
 library(dplyr)
 library(tidyr)
+library (tibble)
 
 #### Daten einlesen
 setwd("../Bio253_SA6850_Research_in_Omics_HS2025")
