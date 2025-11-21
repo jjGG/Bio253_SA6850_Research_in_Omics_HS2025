@@ -556,8 +556,8 @@ for (g in genes) {
 
     # Save SVG + PDF + PNG
     ggsave(paste0("gene_boxes/", g, "_box.pdf"), p, width = 7, height = 3.5)
-    #ggsave(paste0("gene_boxes/", g, "_box.svg"), p, width = 7, height = 3.5)
-    #ggsave(paste0("gene_boxes/", g, "_box.png"), p, width = 7, height = 3.5, dpi = 300)
+    ggsave(paste0("gene_boxes/", g, "_box.svg"), p, width = 7, height = 3.5)
+    ggsave(paste0("gene_boxes/", g, "_box.png"), p, width = 7, height = 3.5, dpi = 300)
 }
 
 ###############################################################################
@@ -759,8 +759,8 @@ for (g in genes) {
         )
 
     # Save vector + PNG
-    #ggsave(paste0("gene_boxes/", g, "_box.pdf"), p, width = 3, height = 3.5)
-    #ggsave(paste0("gene_boxes/", g, "_box.svg"), p, width = 7, height = 3.5)
+    ggsave(paste0("gene_boxes/", g, "_box.pdf"), p, width = 3, height = 3.5)
+    ggsave(paste0("gene_boxes/", g, "_box.svg"), p, width = 7, height = 3.5)
     ggsave(paste0("gene_boxes/", g, "_box.png"), p, width = 7, height = 3.5, dpi = 300)
 }
 
@@ -768,7 +768,7 @@ for (g in genes) {
 ###############################################################################
 ### DONE — Boxes + ONE GLOBAL LEGEND saved in gene_boxes/
 ###############################################################################
-####max auf 3 und auf -3 min --> statt
+####max auf 3 und auf -3 min --> statt 2.92 (kann man auf powerpoint ändern fürs Poster)
 
 
 
