@@ -759,7 +759,7 @@ for (g in genes) {
         )
 
     # Save vector + PNG
-    ggsave(paste0("gene_boxes/", g, "_box.pdf"), p, width = 7, height = 3.5)
+    #ggsave(paste0("gene_boxes/", g, "_box.pdf"), p, width = 3, height = 3.5)
     #ggsave(paste0("gene_boxes/", g, "_box.svg"), p, width = 7, height = 3.5)
     ggsave(paste0("gene_boxes/", g, "_box.png"), p, width = 7, height = 3.5, dpi = 300)
 }
