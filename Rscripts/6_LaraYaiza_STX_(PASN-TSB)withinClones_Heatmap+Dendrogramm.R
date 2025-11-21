@@ -722,7 +722,7 @@ for (g in genes) {
     )
 
     p <- ggplot(df_gene, aes(x = CloneID, y = 1, fill = value_scaled)) +
-        geom_tile(color = "black", linewidth = 1.2) +
+        geom_tile(color = "black", linewidth = 1.2, height = 0.5) +
 
         # numbers inside boxes
         geom_text(
@@ -746,9 +746,9 @@ for (g in genes) {
 
         ggtitle(g) +
 
-        theme_minimal(base_size = 14) +
+        theme_minimal(base_size = 20) +
         theme(
-            plot.title = element_text(size = 20, face = "bold", hjust = 0),
+            plot.title = element_text(size = 10, face = "bold", hjust = 0),
             axis.title = element_blank(),
             axis.text.y = element_blank(),
             axis.ticks = element_blank(),
@@ -761,7 +761,7 @@ for (g in genes) {
     # Save vector + PNG
     ggsave(paste0("gene_boxes/", g, "_box.pdf"), p, width = 7, height = 3.5)
     #ggsave(paste0("gene_boxes/", g, "_box.svg"), p, width = 7, height = 3.5)
-    #ggsave(paste0("gene_boxes/", g, "_box.png"), p, width = 7, height = 3.5, dpi = 300)
+    ggsave(paste0("gene_boxes/", g, "_box.png"), p, width = 7, height = 3.5, dpi = 300)
 }
 
 
