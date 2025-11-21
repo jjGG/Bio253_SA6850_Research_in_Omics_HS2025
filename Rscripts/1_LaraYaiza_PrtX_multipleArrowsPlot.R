@@ -82,9 +82,10 @@ arrow_matrix_sorted
 
 ##################################################################################
 #################################################################################
-##################################################################################
-###Saubere Zahlenmatrix delta-Werte - Production & Regulation
-### Saubere Zahlenmatrix: Production & Regulatory, inkl. Δ(PASN–TSB)
+
+###############################################################################
+###Saubere Zahlenmatrix DELTA(PASN-TSB)-Werte - Production & Regulation     ###
+###############################################################################
 
 library(readxl)
 library(dplyr)
@@ -107,11 +108,9 @@ df <- df %>%
         ~as.numeric(.x)
     ))
 
-
 #### ----------------------------------------------
 #### 1. Produktionsgene MATRIX
 #### ----------------------------------------------
-
 matrix_prod <- df %>%
     unite("Clone_Cond", Strain, Clones, Condition, sep = "-") %>%
     column_to_rownames("Clone_Cond") %>%
@@ -119,12 +118,9 @@ matrix_prod <- df %>%
 
 print(matrix_prod)
 
-
-
 #### ----------------------------------------------
 #### 2. Regulatory MATRIX
 #### ----------------------------------------------
-
 matrix_reg <- df %>%
     unite("Clone_Cond", Strain, Clones, Condition, sep = "-") %>%
     column_to_rownames("Clone_Cond") %>%
@@ -135,9 +131,7 @@ print(matrix_reg)
 #### ----------------------------------------------
 #### 3. Combine Production + Regulatory MATRIX
 #### ----------------------------------------------
-
 matrix_full <- cbind(matrix_prod, matrix_reg)
-
 print(matrix_full)
 #==> THIS WORKS
 #WHY DELTA MATRIX NOT WORKING???
@@ -145,7 +139,6 @@ print(matrix_full)
 #### ----------------------------------------------
 #### 4. Δ-Matrix: PASN – TSB für alle Gene
 #### ----------------------------------------------
-
 # 1. Rownames in separate Spalten zerlegen
 df_full <- matrix_full %>%
     tibble::rownames_to_column("Clone_Cond") %>%
