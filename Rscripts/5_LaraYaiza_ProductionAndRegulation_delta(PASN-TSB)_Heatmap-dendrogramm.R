@@ -107,6 +107,8 @@ pheatmap(
     fontsize = 11,
     main = "Δ Proteomics (PASN – TSB, ohne Growth rate)"
 )
+
+#############################################################
 ###MACHT DAS SINN REGULATORY UND PRODUCTION IN EIN MAP???
 ###ODER SEPARATE PRODUCTION & REGULATORY MAP?
 
@@ -143,3 +145,78 @@ pheatmap(
     fontsize = 11,
     main = "Δ STX-Regulation (σB & rsb genes)"
 )
+#############################################################################
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#############################################################################
+###Regulatory + Production delta(PASN-TSB) + STX-Average
+#############################################################################
+
+delta_df <- df %>%
+    pivot_wider(
+        names_from = Condition,
+        values_from = c(crtM, crtN, crtP, crtQ, crtO,
+                        `sigma-B`, rsbU, rsbV, rsbW,
+                        `Growth rate`)
+    ) %>%
+    mutate(
+        delta_crtM = crtM_PASN - crtM_TSB,
+        delta_crtN = crtN_PASN - crtN_TSB,
+        delta_crtP = crtP_PASN - crtP_TSB,
+        delta_crtQ = crtQ_PASN - crtQ_TSB,
+        delta_crtO = crtO_PASN - crtO_TSB,
+
+        delta_sigmaB = `sigma-B_PASN` - `sigma-B_TSB`,
+        delta_rsbU   = rsbU_PASN - rsbU_TSB,
+        delta_rsbV   = rsbV_PASN - rsbV_TSB,
+        delta_rsbW   = rsbW_PASN - rsbW_TSB,
+
+        #delta_growth = `Growth rate_PASN` - `Growth rate_TSB`
+    ) %>%
+    mutate(Clone_ID = paste(Strain, Clones, sep = "_"))
+
+heat_data <- delta_df %>%
+    select(Clone_ID, starts_with("delta_")) %>%
+    column_to_rownames("Clone_ID")
+
+heat_data_clean <- heat_data %>%
+    select(where(~!any(is.na(.))))
+
+pheatmap(
+    heat_data_clean,
+    scale = "row",
+    clustering_method = "complete",
+    clustering_distance_rows = "euclidean",
+    clustering_distance_cols = "euclidean",
+    fontsize = 12,
+    main = "Protein Abundance Changes PASN vs. TSB"    #titel heatmap
+)
+
+### STX baseline heatmap: relative to ancestor per strain
+
+stx_df <- df %>%
+    distinct(Strain, Clones, `STX Average`) %>%
+    mutate(Clone_ID = paste(Strain, Clones, sep = "_"))
+
+# Calculate strain-wise ancestor reference
+ancestor_values <- stx_df %>%
+    filter(Clones == "Ancestor") %>%
+    select(Strain, ancestor_stx = `STX Average`)
+
+# Join ancestor reference and compute normalized STX
+stx_rel <- stx_df %>%
+    left_join(ancestor_values, by = "Strain") %>%
+    mutate(STX_relative = `STX Average` / ancestor_stx) %>%
+    select(Clone_ID, STX_relative) %>%
+    column_to_rownames("Clone_ID")
+
+# Heatmap (single column)
+pheatmap(
+    stx_rel,
+    scale = "none",
+    cluster_cols = FALSE,      # no column clustering
+    cluster_rows = FALSE,      # no row clustering (this removes the dendrogram!)
+    fontsize = 12,
+    border_color = NA,
+    main = "Phenotypic STX (Relative to Ancestor)"
+)
+
