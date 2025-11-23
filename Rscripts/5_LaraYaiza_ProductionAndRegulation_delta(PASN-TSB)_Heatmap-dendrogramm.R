@@ -214,9 +214,54 @@ pheatmap(
     stx_rel,
     scale = "none",
     cluster_cols = FALSE,      # no column clustering
-    cluster_rows = FALSE,      # no row clustering (this removes the dendrogram!)
+    cluster_rows = FALSE,      # no row clustering (this removes the dendrogramm!)
     fontsize = 12,
     border_color = NA,
     main = "Phenotypic STX (Relative to Ancestor)"
 )
+################################################################################
+###STX-Average as Heatmap seems a bit an overkill, additional colour scale etc.
+###How about as a horizontal number table
+###################################################################################
+library(tidyverse)
+library(ggplot2)
 
+### Desired clone order
+clone_order <- c(
+    "6850_Ancestor",
+    "6850_B0403",
+    "6850_B0804",
+    "6850_B1002",
+    "JE2_Ancestor",
+    "JE2_B0604"
+)
+
+### Build dataframe
+stx_tbl <- df %>%
+    distinct(Strain, Clones, `STX Average`) %>%
+    mutate(Clone_ID = paste(Strain, Clones, sep = "_")) %>%
+    filter(Clone_ID %in% clone_order) %>%
+    mutate(Clone_ID = factor(Clone_ID, levels = clone_order))
+
+### PLOT — light grey boxes, no border, white grid spacing
+ggplot(stx_tbl, aes(x = Clone_ID, y = 1, label = round(`STX Average`, 2))) +
+
+    # light grey background squares
+    geom_tile(fill = "grey95", color = "white", width = 0.95, height = 0.95) +
+
+    # centered black numbers
+    geom_text(size = 6, color = "black") +
+
+    # formatting
+    scale_y_continuous(expand = c(0,0), limits = c(0.5, 1.5)) +
+    theme_minimal() +
+    theme(
+        axis.title = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid = element_blank(),
+        axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
+        plot.title = element_text(size = 16, face = "bold")
+    ) +
+
+    ggtitle("Baseline STX-Average per Clone")
