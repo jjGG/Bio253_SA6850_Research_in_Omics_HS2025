@@ -6,10 +6,15 @@
 library(tidyverse)
 library(readxl)
 library(writexl)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(pheatmap)
+
 
 #### Daten einlesen
-setwd("../Bio253_SA6850_Research_in_Omics_HS2025")
-file <- "resources/LaraYaiza_tabel_STX.xlsx"          # relative folder path!
+# setwd("../Bio253_SA6850_Research_in_Omics_HS2025")
+file <- "../resources/LaraYaiza_tabel_STX.xlsx"          # relative folder path!
 
 #### richtige Tabelle einlesen
 df <- read_excel(file, sheet = "Tabelle2", skip=3)
@@ -58,8 +63,6 @@ arrow_matrix
 ### Erweiterung: Vertikale Pfeil-Matrix für log2FC-Werte  ###
 #############################################################
 
-library(tidyverse)
-library(ggplot2)
 
 ### 1) Matrix ins lange Format bringen
 df_long <- matrix_ready %>%
@@ -119,10 +122,6 @@ pfeil_plot
 #########==========================================
 ###NEUER PFEILPLOT - BESSER????
 
-library(ggplot2)
-library(dplyr)
-library(tidyr)
-
 ### Matrix → long format
 df_long <- matrix_ready %>%
     rownames_to_column("Sample") %>%
@@ -172,10 +171,6 @@ ggplot(df_long, aes(x = Gene_f, y = Sample_f)) +
     )
 
 ####====================================================
-library(ggplot2)
-library(dplyr)
-library(tidyr)
-
 df_long <- matrix_ready %>%
     rownames_to_column("Sample") %>%
     pivot_longer(cols = -Sample, names_to = "Gene", values_to = "log2FC") %>%
@@ -372,8 +367,6 @@ ggplot(df_plot, aes(Gene_f, Sample_f)) +
 ### Heatmap + Dendrogramm + log2(STX)   FEEDBACK JONAS GROSS                 ###
 ################################################################################
 
-library(tidyverse)
-library(pheatmap)
 
 ###-----------------------------------------
 ### 1) STX log2-transformieren
