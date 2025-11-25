@@ -6,7 +6,7 @@ library(tidyr)
 
 #look at SB0804
 
-methylation_data_EGG <- readRDS("~/Bio253_Research_in_Omics_HS2025/resources/methylation_data_EGGnogAnnotated.rds")
+methylation_data_EGG <- readRDS(".../resources/methylation_data_EGGnogAnnotated.rds")
 View(methylation_data_EGG)
 
 #filter feature, group and IPD ratio
@@ -65,7 +65,7 @@ library(ggplot2)
 library(tidyr)
 
 
-methylation_data_EGG <- readRDS("~/Bio253_Research_in_Omics_HS2025/resources/methylation_data_EGGnogAnnotated.rds")
+methylation_data_EGG <- readRDS(".../resources/methylation_data_EGGnogAnnotated.rds")
 View(methylation_data_EGG)
 
 #filter feature, group and IPD ratio
@@ -122,7 +122,7 @@ library(ggplot2)
 library(tidyr)
 
 
-methylation_data_EGG <- readRDS("~/Bio253_Research_in_Omics_HS2025/resources/methylation_data_EGGnogAnnotated.rds")
+methylation_data_EGG <- readRDS(".../resources/methylation_data_EGGnogAnnotated.rds")
 View(methylation_data_EGG)
 
 #filter feature, group and IPD ratio
@@ -175,7 +175,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 
-methylation_data_EGG <- readRDS("~/Bio253_Research_in_Omics_HS2025/resources/methylation_data_EGGnogAnnotated.rds")
+methylation_data_EGG <- readRDS(".../resources/methylation_data_EGGnogAnnotated.rds")
 
 motif_status_for_group <- function(dat, group_val, group_label = NULL) {
     if (is.null(group_label)) group_label <- as.character(group_val)
@@ -234,7 +234,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 
-methylation_data_EGG <- readRDS("~/Bio253_Research_in_Omics_HS2025/resources/methylation_data_EGGnogAnnotated.rds")
+methylation_data_EGG <- readRDS(".../resources/methylation_data_EGGnogAnnotated.rds")
 
 motif_status_for_group <- function(dat, group_val, group_label = NULL) {
     if (is.null(group_label)) group_label <- as.character(group_val)
