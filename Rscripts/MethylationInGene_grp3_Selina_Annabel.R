@@ -6,7 +6,7 @@ library(ggplot2)
 library(tidyr)
 
 
-methylation_data_EGG <- readRDS("~/Bio253_Research_in_Omics_HS2025/resources/methylation_data_EGGnogAnnotated.rds")
+methylation_data_EGG <- readRDS("../resources/methylation_data_EGGnogAnnotated.rds")
 View(methylation_data_EGG)
 
 #look at methylationsites in gene region of RSAU_001268
