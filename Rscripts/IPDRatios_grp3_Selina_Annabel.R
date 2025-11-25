@@ -4,7 +4,7 @@ library(ggplot2)
 library(tidyr)
 
 
-methylation_data_EGG <- readRDS("~/Bio253_Research_in_Omics_HS2025/resources/methylation_data_EGGnogAnnotated.rds")
+methylation_data_EGG <- readRDS("../resources/methylation_data_EGGnogAnnotated.rds")
 
 
 #visualize the different features in color
@@ -98,7 +98,7 @@ library(ggplot2)
 library(tidyr)
 
 
-methylation_data_EGG <- readRDS("~/Bio253_Research_in_Omics_HS2025/resources/methylation_data_EGGnogAnnotated.rds")
+methylation_data_EGG <- readRDS("../resources/methylation_data_EGGnogAnnotated.rds")
 methylation_data_EGG <- filter(methylation_data_EGG, IPDRatio > 2.5)
 
 library(dplyr)
