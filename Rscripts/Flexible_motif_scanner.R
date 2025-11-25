@@ -12,6 +12,37 @@ library(ggplot2)
 
 # functions
 
+# Calculate methylation percentage in bins for each strand
+# Function to calculate methylation percentage in bins
+calc_meth_percentage <- function(motifs_df, bin_size, genome_len) {
+    # Create bins - extend slightly beyond genome length to catch edge cases
+    bins <- seq(0, genome_len + bin_size, by = bin_size)
+
+    # Calculate for each bin
+    bin_stats <- data.frame()
+
+    for (i in 1:(length(bins)-1)) {
+        bin_start <- bins[i]
+        bin_end <- bins[i+1]
+
+        # Get motifs in this bin
+        motifs_in_bin <- motifs_df %>%
+            filter(position >= bin_start & position < bin_end)
+
+        if (nrow(motifs_in_bin) > 0) {
+            meth_pct <- (sum(motifs_in_bin$is_methylated) / nrow(motifs_in_bin)) * 100
+            bin_stats <- rbind(bin_stats, data.frame(
+                bin_start = bin_start,
+                bin_mid = (bin_start + bin_end) / 2,
+                bin_end = bin_end,
+                meth_percentage = meth_pct,
+                n_motifs = nrow(motifs_in_bin)
+            ))
+        }
+    }
+    return(bin_stats)
+}
+
 # Function to find all matches of a degenerate motif
 find_degenerate_motif <- function(genome_seq, pattern) {
 
@@ -164,46 +195,6 @@ cat("  - strand:", sum(meth_data$strand == "-"), "\n\n")
 
 cat("Scanning genome for motif pattern...\n")
 
-# Function to find all matches of a degenerate motif
-find_degenerate_motif <- function(genome_seq, pattern) {
-
-    # Convert pattern to DNAString with IUPAC codes
-    pattern_dna <- DNAString(pattern)
-
-    # Search on + strand
-    cat("  Searching + strand...\n")
-    plus_matches <- matchPattern(pattern_dna, genome_seq,
-                                 with.indels = FALSE,
-                                 fixed = FALSE)  # Allow IUPAC ambiguity
-    plus_positions <- start(plus_matches)
-    plus_sequences <- as.character(plus_matches)
-
-    # Search on - strand (reverse complement of pattern)
-    cat("  Searching - strand...\n")
-    pattern_rc <- reverseComplement(pattern_dna)
-    minus_matches <- matchPattern(pattern_rc, genome_seq,
-                                  with.indels = FALSE,
-                                  fixed = FALSE)
-    minus_positions <- start(minus_matches)
-    minus_sequences <- as.character(minus_matches)
-
-    # Create results data frame
-    results <- data.frame(
-        position = c(plus_positions, minus_positions),
-        strand = c(rep("+", length(plus_positions)),
-                   rep("-", length(minus_positions))),
-        sequence = c(plus_sequences, minus_sequences),
-        stringsAsFactors = FALSE
-    )
-
-    # Sort by position
-    results <- results[order(results$position), ]
-
-    return(list(
-        results = results,
-        pattern_rc = as.character(pattern_rc)
-    ))
-}
 
 # Perform the search
 search_results <- find_degenerate_motif(genome_seq, motif_pattern)
@@ -559,36 +550,6 @@ if (total_motifs > 0 && methylated_motifs > 0) {
     # For a ~3Mb genome, 5kb bins give good resolution
     bin_width <- 5000
 
-    # Calculate methylation percentage in bins for each strand
-    # Function to calculate methylation percentage in bins
-    calc_meth_percentage <- function(motifs_df, bin_size, genome_len) {
-        # Create bins - extend slightly beyond genome length to catch edge cases
-        bins <- seq(0, genome_len + bin_size, by = bin_size)
-
-        # Calculate for each bin
-        bin_stats <- data.frame()
-
-        for (i in 1:(length(bins)-1)) {
-            bin_start <- bins[i]
-            bin_end <- bins[i+1]
-
-            # Get motifs in this bin
-            motifs_in_bin <- motifs_df %>%
-                filter(position >= bin_start & position < bin_end)
-
-            if (nrow(motifs_in_bin) > 0) {
-                meth_pct <- (sum(motifs_in_bin$is_methylated) / nrow(motifs_in_bin)) * 100
-                bin_stats <- rbind(bin_stats, data.frame(
-                    bin_start = bin_start,
-                    bin_mid = (bin_start + bin_end) / 2,
-                    bin_end = bin_end,
-                    meth_percentage = meth_pct,
-                    n_motifs = nrow(motifs_in_bin)
-                ))
-            }
-        }
-        return(bin_stats)
-    }
 
     # Calculate methylation percentages for each strand
     plus_meth_pct <- calc_meth_percentage(motif_plus, bin_width, genome_length)
@@ -648,7 +609,7 @@ if (total_motifs > 0 && methylated_motifs > 0) {
             limits = c(0, max_count_plus * (1 + line_offset + 0.35))
         )
 
-    fN <- paste(project,"_",desc,"_",motif_pattern, "_density_overlay_plus_strand.png", sep="")
+    fN <- paste(motif_pattern,"_", project,"_",desc, "_density_overlay_plus_strand.png", sep="")
     ggsave(fN, p5, width = 14, height = 6, dpi = 300)
     print(p5)
 
@@ -700,7 +661,7 @@ if (total_motifs > 0 && methylated_motifs > 0) {
             limits = c(0, max_count_minus * (1 + line_offset + 0.35))
         )
 
-    fN <- paste(project,"_",desc,"_",motif_pattern, "_density_overlay_minus_strand.png", sep="")
+    fN <- paste(motif_pattern,"_", project,"_",desc, "_density_overlay_minus_strand.png", sep="")
     ggsave(fN, p6, width = 14, height = 6, dpi = 300)
     print(p6)
 
@@ -735,7 +696,7 @@ if (total_motifs > 0 && methylated_motifs > 0) {
               legend.position = "top") +
         scale_x_continuous(labels = scales::comma)
 
-    fN <- paste(project,"_",desc,"_",motif_pattern, "_density_overlay_both_strands.png", sep="")
+    fN <- paste(motif_pattern,"_", project,"_",desc, "_density_overlay_both_strands.png", sep="")
     ggsave(fN, p7, width = 14, height = 8, dpi = 300)
     print(p7)
 
