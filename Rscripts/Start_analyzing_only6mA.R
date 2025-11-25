@@ -16,7 +16,7 @@ library(rtracklayer)
 # globals
 project <- "Bio253"
 dateToday <- format(Sys.Date(), "%Y%m%d")
-desc <- "Prepare"
+desc <- "GoForMotif"
 
 #
 # data to read in
@@ -41,6 +41,14 @@ biocycSA6850_slim <- biocycSA6850 %>%
 
 # who is in the game what clones
 table(mtX$group)
+
+# Numbercrunching
+(pdfN <- paste(project,"_", desc, "NumberCrunching", dateToday, ".pdf", sep = ""))
+pdf(pdfN, width = 4, height = 3)
+ggplot(mtX, aes(x = feature, fill=group)) +
+    geom_bar()  +
+    theme_minimal()
+dev.off()
 
 # Show densities of IPDratio and visualize different feature types
 (pdfN <- paste(project,"_", desc, "IPDRatio_density_by_feature_", dateToday, ".pdf", sep = ""))
@@ -122,7 +130,7 @@ ggsave(fN, width = 20, height = 6)
 
 colnames(methylation_slim)
 # Do binning of methylation sites to visualize as heatmap, we need all replicates
-bin_size <- 100  # 10bp bins
+bin_size <- 4000  # 10bp bins
 methylation_binned_all <- mtX_wPrX_OfInterest %>% select(start, strand, feature, motif, group, treatment, replicate) %>%
     unite(condition, c(group, treatment, replicate), sep="_") %>%
     mutate(bin = floor(start / bin_size) * bin_size) %>%
@@ -288,7 +296,7 @@ ggsave(fN, width = 30, height = 10)
 
 # do again binning without clones
 # Do binning of methylation sites to visualize as heatmap, we need all replicates
-bin_size <- 1000  # 100bp bins
+bin_size <- 4000  # 100bp bins
 methylation_binned_condition <- mtX_wPrX_OfInterest %>% select(start, strand, feature, motif, treatment) %>%
     mutate(bin = floor(start / bin_size) * bin_size) %>%
     count(treatment, strand, bin, name = "sites_in_bin") %>%
@@ -348,12 +356,19 @@ largest_diff_AllStrand_ofInterest <- methylation_withDiffs %>%
     select(start, hypoMethRegion_end, diff_to_next_site, strand, feature)
 
 
+largest_diff_AllStrand_ofInterest[1,]
 # Find genes overlapping with hypo-methylated regions
 genes_in_hypo_regions <- find_overlapping_genes(biocycSA6850_slim, largest_diff_AllStrand_ofInterest)
-genes_in_hypo_regions
+(genes_in_hypo_regions_one <- find_overlapping_genes(biocycSA6850_slim, largest_diff_AllStrand_ofInterest[1,]))
+(genes_in_hypo_regions_two <- find_overlapping_genes(biocycSA6850_slim, largest_diff_AllStrand_ofInterest[2,]))
+(genes_in_hypo_regions_three <- find_overlapping_genes(biocycSA6850_slim, largest_diff_AllStrand_ofInterest[3,]))
+(genes_in_hypo_regions_four <- find_overlapping_genes(biocycSA6850_slim, largest_diff_AllStrand_ofInterest[4,]))
+(genes_in_hypo_regions_five <- find_overlapping_genes(biocycSA6850_slim, largest_diff_AllStrand_ofInterest[5,]))
+
+sort(genes_in_hypo_regions_one)
 
 # Some genes in biocyc do not have an RSAU_Number -> but NA --> follow up on these more?? what are these?
-genes_in_hypo_regions <- genes_in_hypo_regions[!is.na(genes_in_hypo_regions)]
+NA_genes_in_hypo_regions <- genes_in_hypo_regions[!is.na(genes_in_hypo_regions)]
 
 
 # Print results
@@ -362,7 +377,7 @@ print(genes_in_hypo_regions)
 
 # Find the full details of these genes
 overlapping_genes_details_all <- biocycSA6850_slim %>%
-    filter(Acc2 %in% genes_in_hypo_regions)
+    filter(Acc2 %in% genes_in_hypo_regions_five)
 
 # Print the details
 print(overlapping_genes_details_all)
@@ -377,7 +392,7 @@ overlapping_genes_details_all <- left_join(overlapping_genes_details_all, desc, 
 # in this sheet we assembled the protein expression data w/ the different statistical analysis for different contrasts
 prXdata <- read_tsv("../resources/SA6850_prXallWide_moreMeta.tsv")
 genes_w_proteinExpression_in_hypoRegions <- left_join(x = overlapping_genes_details_all, y = prXdata, by = c("Acc2" = "LocusTag"))
-
+write_tsv(genes_w_proteinExpression_in_hypoRegions, "My_Gap_region_four.tsv")
 
 
 # iBAQ value is a measurement for proteins in proteomics that can be used to
@@ -414,9 +429,81 @@ ggplot() +
 
 
 # screen "back-ground" (DNA) for known (degenerated) motifs of methylation
+# done in a separate script (flexible_motif_scanner.R)
 
 
+# generate strand specific motifs and group motifs (gene, upstream, downstream, ... )
+head(methylation_slim)
+motif_upstream_plus <- ""
+flank_size <- 20
+
+library(Biostrings)
+library(ggseqlogo)
+# funcs
+# Create position frequency matrices
+create_pfm <- function(sequences) {
+    # Convert to DNAStringSet
+    dna_set <- DNAStringSet(sequences)
+
+    # Create consensus matrix
+    cons_mat <- consensusMatrix(dna_set, as.prob = FALSE)
+
+    # Keep only A, C, G, T rows
+    pfm <- cons_mat[c("A", "C", "G", "T"), ]
+
+    return(pfm)
+}
+
+# Prepare data for ggseqlogo
+plot_seqlogo <- function(pfm, strand_label, output_file) {
+    # Convert PFM to probability matrix
+    ppm <- prop.table(pfm, margin = 2)
+
+    # Create plot
+    p <- ggplot() +
+        geom_logo(ppm) +
+        theme_logo() +
+        labs(title = paste("Methylation Motif for: ", strand_label),
+             x = paste("Position (21 = methylation site, flanking =", flank_size, "bp)"),
+             y = "Bits") +
+        theme(plot.title = element_text(hjust = 0.5, size = 14, face = "bold"))
+
+    ggsave(output_file, plot = p, width = 20, height = 4, dpi = 300)
+
+    return(p)
+}
 
 
+# filter properly from beginning again
+unique(mtX$category)
+COI <- unique(mtX$category)[2]
+strNd <- "+"
 
+motifs_oi <- mtX |> filter(IPDRatio > IPDrThreshold) |>
+    filter(feature == featureOfInterest) |>
+    select(start, strand, motif, category) |> distinct() |>
+    filter(strand == strNd) |> filter(category == COI) |>
+    select(motif)
 
+# Generate PFMs
+pfm_oi <- create_pfm(motifs_oi$motif)
+plot_seqlogo(pfm_oi, paste0(COI," +"), "myMotif.png")
+
+# Do it in a loop
+COI <- unique(mtX$category)[4]
+strNd <- "-"
+
+for (i in 1:length(unique(mtX$category))) {
+    COI <- unique(mtX$category)[i]
+    pngN <- paste("Motif_",COI,"_",strNd,".png" , sep="")
+    mylabel <- paste0(COI," ",strNd, " strand")
+    motifs_oi <- mtX |> filter(IPDRatio > IPDrThreshold) |>
+        filter(feature == featureOfInterest) |>
+        select(start, strand, motif, category) |> distinct() |>
+        filter(strand == strNd) |> filter(category == COI) |>
+        select(motif)
+
+    # Generate PFMs
+    pfm_oi <- create_pfm(motifs_oi$motif)
+    plot_seqlogo(pfm_oi, mylabel, pngN)
+}
