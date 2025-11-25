@@ -5,7 +5,7 @@ library(dplyr)
 library(readr)
 
 
-methylation_data_EGGnogAnnotated <- readRDS("~/Bio253_Research_in_Omics_HS2025/resources/methylation_data_EGGnogAnnotated.rds")
+methylation_data_EGGnogAnnotated <- readRDS("../resources/methylation_data_EGGnogAnnotated.rds")
 
 # Filter rows where base_after starts with "C" and strand is "-"
 
@@ -115,7 +115,7 @@ library(ggseqlogo)
 
 # Load your data
 methylation_data_EGGnogAnnotated <- readRDS(
-    "~/Bio253_Research_in_Omics_HS2025/resources/methylation_data_EGGnogAnnotated.rds"
+    "../resources/methylation_data_EGGnogAnnotated.rds"
 )
 
 # Filter rows of interest
