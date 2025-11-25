@@ -10,6 +10,7 @@
 ### - separate the two strains --> generate 2 separate heatmaps for each strain!
 ###%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 library(tidyverse)
 library(readxl)
 library(pheatmap)
