@@ -29,6 +29,8 @@ Rscripts/*.pdf
 # produced outputs
 Rscripts/*.png
 Rscripts/*.txt
+Rscripts/*.csv
+Rscripts/*.tsv
 
 # produced vignettes
 vignettes/*.html
